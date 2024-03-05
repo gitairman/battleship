@@ -1,0 +1,12 @@
+#gameBoard {
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
+  border: solid black 1px;
+}
+
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
