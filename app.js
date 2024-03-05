@@ -8,8 +8,9 @@ const createBoard = (length, width) => {
   gameBoard.style.width = `${width * 50}px`
   gameBoard.style.height = `${length * 50}px`
   for (let i = 0; i < area; i++) {
-    row = (length % i) + 65
-    col = width % i
+    console.log(i / length)
+    row = Math.floor(i / length) + 65
+    col = (i % width) + 1
     gameBoard.insertAdjacentHTML(
       'beforeend',
       `<div
@@ -17,7 +18,7 @@ const createBoard = (length, width) => {
         class="tile"
         id=tile-${i}
         data-coord=${String.fromCharCode(row) + col}>
-        0
+        ${String.fromCharCode(row) + col}
       </div>`
     )
   }
