@@ -9,4 +9,58 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border: solid black 1px;
+  position: relative;
+}
+
+.ship {
+  z-index: 9;
+}
+
+#carrier {
+  border: solid black 1px;
+  text-align: center;
+  line-height: 48px;
+  height: 46px;
+  width: 246px;
+  font-size: 3.5rem;
+  top: 0%;
+  left: 0%;
+}
+
+#battleship {
+  border: solid black 1px;
+  line-height: 48px;
+  height: 46px;
+  width: 198px;
+  font-size: 2.05rem;
+  top: 0%;
+  left: 0%;
+}
+#cruiser {
+  border: solid black 1px;
+  line-height: 46px;
+  height: 46px;
+  width: 148px;
+  font-size: 2.15rem;
+  top: 0%;
+  left: 0%;
+}
+#submarine {
+  border: solid black 1px;
+  line-height: 46px;
+  height: 46px;
+  width: 148px;
+  font-size: 1.55rem;
+  top: 0%;
+  left: 0%;
+}
+#destroyer {
+  border: solid black 1px;
+  line-height: 46px;
+  height: 46px;
+  width: 98px;
+  font-size: 1.03rem;
+  top: 0%;
+  left: 0%;
 }

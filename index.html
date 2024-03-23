@@ -4,9 +4,24 @@
     <meta charset="UTF-8" />
     <title>Battleship</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
   </head>
   <body>
     <div id="gameBoard"></div>
-    <script src="app.js"></script>
+    <div class="ship p1" id="carrier" data-size="5" draggable="true">
+      CARRIER
+    </div>
+    <div class="ship p1" id="battleship" data-size="4" draggable="true">
+      BATTLESHIP
+    </div>
+    <div class="ship p1" id="cruiser" data-size="3" draggable="true">
+      CRUISER
+    </div>
+    <div class="ship p1" id="submarine" data-size="3" draggable="true">
+      SUBMARINE
+    </div>
+    <div class="ship p1" id="destroyer" data-size="2" draggable="true">
+      DESTROYER
+    </div>
   </body>
 </html>
