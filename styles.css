@@ -15,52 +15,64 @@
 
 .ship {
   z-index: 9;
-}
-
-#carrier {
-  border: solid black 1px;
+  /* border: solid black 1px; */
   text-align: center;
   line-height: 48px;
   height: 46px;
-  width: 246px;
-  font-size: 3.5rem;
   top: 0%;
   left: 0%;
+  transform-origin: 23px 23px;
 }
 
-#battleship {
-  border: solid black 1px;
-  line-height: 48px;
-  height: 46px;
-  width: 198px;
-  font-size: 2.05rem;
-  top: 0%;
-  left: 0%;
+#carrier,
+#carrier-clone {
+  font-size: 3.5rem;
+  width: 246px;
 }
-#cruiser {
+
+#carrier div {
   border: solid black 1px;
-  line-height: 46px;
-  height: 46px;
-  width: 148px;
-  font-size: 2.15rem;
-  top: 0%;
-  left: 0%;
+  width: 100%;
+  height: 100%;
 }
-#submarine {
-  border: solid black 1px;
-  line-height: 46px;
-  height: 46px;
-  width: 148px;
-  font-size: 1.55rem;
-  top: 0%;
-  left: 0%;
+
+#battleship,
+#battleship-clone {
+  font-size: 2rem;
+  width: 196px;
 }
-#destroyer {
+#battleship div {
   border: solid black 1px;
-  line-height: 46px;
-  height: 46px;
-  width: 98px;
-  font-size: 1.03rem;
-  top: 0%;
-  left: 0%;
+  width: 100%;
+  height: 100%;
+}
+#cruiser,
+#cruiser-clone {
+  font-size: 2rem;
+  width: 146px;
+}
+#cruiser div {
+  border: solid black 1px;
+  width: 100%;
+  height: 100%;
+}
+#submarine,
+#submarine-clone {
+  font-size: 1.5rem;
+  width: 146px;
+}
+#submarine div {
+  border: solid black 1px;
+  width: 100%;
+  height: 100%;
+}
+#destroyer,
+#destroyer-clone {
+  font-size: 1rem;
+  width: 96px;
+}
+#destroyer div {
+  border: solid black 1px;
+  width: 100%;
+  height: 100%;
 }
