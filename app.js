@@ -3,22 +3,30 @@ const borderWidth = 1;
 const tileWidth = 50;
 const tileHeight = 50;
 let draggingShip;
+let draggedOrientation;
 let clone;
 let draggingOver;
 
 const setTiles = (count, currNode, colour) => {
+  let offset;
+  if (draggedOrientation === 'rotate(90deg)') {
+    offset = 10;
+  } else offset = 1;
+  let currTile = Number(currNode.id.split('-')[1]);
+
   while (count > 0) {
     currNode.style.backgroundColor = colour;
-    currNode = currNode.nextSibling;
+    currNode = document.getElementById(`tile-${currTile + offset}`);
+    currTile += offset;
     count--;
   }
 };
 
 const dropShip = (e) => {
   e.preventDefault();
+  console.log(e);
 
   const currNode = draggingOver;
-  if (!currNode.classList.contains('tile')) return;
 
   const shipLen = Number(draggingShip.dataset.size);
   const currNodeId = Number(currNode.id.split('-')[1]);
@@ -72,6 +80,8 @@ const dragEnter = (e) => {
 
 const dragOver = (e) => {
   e.preventDefault();
+  // console.log(e);
+
   const tile = Math.floor(e.pageY / 50) * 10 + Math.floor(e.pageX / 50);
   const currNode = document.getElementById(`tile-${tile}`);
   let prevNode = draggingOver;
@@ -96,7 +106,7 @@ const dragOver = (e) => {
 };
 
 const dragStart = (e) => {
-  console.log(e.target);
+  // console.log(e.target);
 
   draggingShip = e.target;
   clone = draggingShip.cloneNode(true);
@@ -140,9 +150,12 @@ const handleShipClick = (e) => {
 
   const vertical = 'rotate(90deg)';
   const horizontal = 'rotate(0deg)';
-  if (orientation.transform === vertical)
-    return (orientation.transform = horizontal);
-  orientation.transform = vertical;
+  if (orientation.transform === vertical) {
+    orientation.transform = horizontal;
+  } else {
+    orientation.transform = vertical;
+  }
+  draggedOrientation = orientation.transform;
 };
 
 const createBoard = (length, width) => {
