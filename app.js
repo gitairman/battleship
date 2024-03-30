@@ -3,34 +3,87 @@ const borderWidth = 1;
 const tileWidth = 50;
 const tileHeight = 50;
 let draggingShip;
-let draggedOrientation;
+let shipIsVertical = false;
 let clone;
 let draggingOver;
 
 const setTiles = (count, currNode, colour) => {
   let offset;
-  if (draggedOrientation === 'rotate(90deg)') {
+  if (shipIsVertical) {
     offset = 10;
   } else offset = 1;
   let currTile = Number(currNode.id.split('-')[1]);
+  const startRow = Math.floor(currTile / 10);
+  let currRow = startRow;
 
   while (count > 0) {
     currNode.style.backgroundColor = colour;
     currNode = document.getElementById(`tile-${currTile + offset}`);
     currTile += offset;
     count--;
+    if (currTile > 100) break;
+    if (offset === 10) continue;
+    currRow = Math.floor(currTile / 10);
+    if (offset === 1 && currRow != startRow) break;
   }
+};
+
+const setShip = (ship, currNode) => {
+  let offset;
+  if (shipIsVertical) {
+    offset = 10;
+  } else offset = 1;
+  let currTile = Number(currNode.id.split('-')[1]);
+
+  let count = ship.dataset.size;
+  while (count > 0) {
+    currNode.classList.add('ship_on');
+    currNode.dataset.ship = ship.id;
+    currNode = document.getElementById(`tile-${currTile + offset}`);
+    currTile += offset;
+    count--;
+  }
+};
+
+const unsetShip = (ship, currNode) => {
+  console.log(ship, currNode);
+
+  let offset;
+  if (shipIsVertical) {
+    offset = 10;
+  } else offset = 1;
+  let currTile = Number(currNode.id.split('-')[1]);
+
+  let count = ship.dataset.size;
+  while (count > 0) {
+    currNode.classList.remove('ship_on');
+    currNode.dataset.ship = null;
+    currNode = document.getElementById(`tile-${currTile + offset}`);
+    currTile += offset;
+    count--;
+  }
+};
+
+const checkShipOnBoard = (len, tile) => {
+  if (shipIsVertical) return (len - 1) * 10 + tile < 100;
+  return (tile % 10) + len <= 10;
+};
+const checkCanRotate = (rotateTo, len, currNode) => {
+  const tile = Number(currNode.id.split('-')[1]);
+  if (rotateTo === 'vertical') return (len - 1) * 10 + tile < 100;
+
+  return (tile % 10) + len <= 10;
 };
 
 const dropShip = (e) => {
   e.preventDefault();
-  console.log(e);
+  // console.log(e);
 
   const currNode = draggingOver;
 
   const shipLen = Number(draggingShip.dataset.size);
   const currNodeId = Number(currNode.id.split('-')[1]);
-  const isOnBoard = (currNodeId % 10) + shipLen <= 10;
+  const isOnBoard = checkShipOnBoard(shipLen, currNodeId);
 
   if (!isOnBoard) {
     const prevParent = draggingShip.parentNode;
@@ -43,39 +96,15 @@ const dropShip = (e) => {
   clone.remove();
 
   setTiles(shipLen, currNode, 'blue');
+  setShip(draggingShip, currNode);
 };
 
 const dragLeave = (e) => {
   e.preventDefault();
-  // const currNode = e.target;
-  // if (!currNode.classList.contains('tile')) return;
-
-  // const shipLen = Number(draggingShip.dataset.size);
-  // const currNodeId = Number(currNode.id.split('-')[1]);
-  // const isOnBoard = (currNodeId % 10) + shipLen <= 10;
-  // const count = isOnBoard ? shipLen : 10 - (currNodeId % 10);
-  // setTiles(count, currNode, 'transparent');
 };
 
 const dragEnter = (e) => {
   e.preventDefault();
-  // console.log(e);
-
-  // const currNode = e.target;
-  // if (!currNode.classList.contains('tile')) return;
-
-  // // setTimeout to ensure following code runs after drag leave handler
-  // setTimeout(() => {
-  //   const shipLen = Number(draggingShip.dataset.size);
-
-  //   const currNodeId = Number(currNode.id.split('-')[1]);
-  //   const isOnBoard = (currNodeId % 10) + shipLen <= 10;
-  //   const colour = isOnBoard ? 'green' : 'red';
-
-  //   const count = isOnBoard ? shipLen : 10 - (currNodeId % 10);
-
-  //   setTiles(count, currNode, colour);
-  // });
 };
 
 const dragOver = (e) => {
@@ -90,11 +119,13 @@ const dragOver = (e) => {
 
   const shipLen = Number(draggingShip.dataset.size);
   const currNodeId = Number(currNode.id.split('-')[1]);
-  const isOnBoard = (currNodeId % 10) + shipLen <= 10;
+
+  const isOnBoard = checkShipOnBoard(shipLen, currNodeId);
+
   const colour = isOnBoard ? 'green' : 'red';
-  const count = isOnBoard ? shipLen : 10 - (currNodeId % 10);
-  setTiles(count, prevNode, 'transparent');
-  setTiles(count, currNode, colour);
+
+  setTiles(shipLen, prevNode, 'transparent');
+  setTiles(shipLen, currNode, colour);
 
   draggingOver = currNode;
 
@@ -106,11 +137,17 @@ const dragOver = (e) => {
 };
 
 const dragStart = (e) => {
-  // console.log(e.target);
+  if (draggingShip && draggingShip.parentNode.classList.contains('tile')) {
+    setTiles(draggingShip.dataset.size, draggingShip.parentNode, 'transparent');
+  }
+
+  if (e.target.parentNode.classList.contains('tile')) {
+    unsetShip(e.target, e.target.parentNode);
+  }
 
   draggingShip = e.target;
   clone = draggingShip.cloneNode(true);
-  const isRotated = draggingShip.style.transform === 'rotate(90deg)';
+  shipIsVertical = draggingShip.style.transform === 'rotate(90deg)';
 
   clone.id = `${draggingShip.id}-clone`;
   clone.style.position = 'absolute';
@@ -120,7 +157,7 @@ const dragStart = (e) => {
   let xOffset = yOffset;
 
   const inner = clone.childNodes[1];
-  if (isRotated) {
+  if (shipIsVertical) {
     inner.style.transform = 'rotate(90deg)';
 
     const shipLen = draggingShip.dataset.size;
@@ -131,31 +168,53 @@ const dragStart = (e) => {
 
   e.dataTransfer.setDragImage(clone, xOffset, yOffset);
   e.dataTransfer.effectAllowed = 'move';
-
-  const currParent = e.target.parentNode;
-  if (!currParent.classList.contains('tile')) return;
-
-  const count = draggingShip.dataset.size;
-  setTiles(count, currParent, 'blue');
 };
 
-const handleTileClick = (e) => {
-  console.log(e);
-  const coord = e.target.dataset.coord;
-  console.log(`You just clicked ${coord}`);
+const handleTileClick = ({ target }) => {
+  const coord = target.dataset.coord;
+  if (coord) return console.log(`You just clicked on tile ${coord}`);
+  const ship = target.innerText;
+  return console.log(`You just click on a ${ship}`);
 };
 
-const handleShipClick = (e) => {
-  const orientation = e.currentTarget.style;
+const rotateShip = (newOrientation, ship, orientation, currLoc) => {
+  const shipLen = Number(ship.dataset.size);
+  const isOnBoard = currLoc.classList.contains('tile');
+
+  if (isOnBoard) {
+    setTiles(shipLen, currLoc, 'transparent');
+    unsetShip(ship, currLoc);
+  }
+  orientation.transform = newOrientation;
+  shipIsVertical = !shipIsVertical;
+  if (isOnBoard) {
+    setTiles(shipLen, currLoc, 'blue');
+    setShip(ship, currLoc);
+  }
+};
+
+const handleShipClick = ({ currentTarget }) => {
+  const ship = currentTarget;
+  console.log(ship);
+
+  const currLoc = ship.parentNode;
+  const orientation = ship.style;
+  const shipLen = Number(ship.dataset.size);
 
   const vertical = 'rotate(90deg)';
   const horizontal = 'rotate(0deg)';
+
   if (orientation.transform === vertical) {
-    orientation.transform = horizontal;
-  } else {
-    orientation.transform = vertical;
+    const canRotate = checkCanRotate('horizontal', shipLen, currLoc);
+
+    if (!canRotate) return console.log('cannot rotate to horizontal');
+    rotateShip(horizontal, ship, orientation, currLoc);
+    return;
   }
-  draggedOrientation = orientation.transform;
+  const canRotate = checkCanRotate('vertical', shipLen, currLoc);
+
+  if (!canRotate) return console.log('cannot rotate to vertical');
+  rotateShip(vertical, ship, orientation, currLoc);
 };
 
 const createBoard = (length, width) => {
@@ -165,6 +224,7 @@ const createBoard = (length, width) => {
 
   gameBoard.style.width = `${width * 50}px`;
   gameBoard.style.height = `${length * 50}px`;
+  gameBoard.addEventListener('click', handleTileClick);
   for (let i = 0; i < area; i++) {
     // console.log(i / length);
     row = Math.floor(i / length) + 65;
@@ -179,7 +239,6 @@ const createBoard = (length, width) => {
     tile.innerText = coord;
     // console.log(tile);
 
-    tile.addEventListener('click', handleTileClick);
     tile.addEventListener('dragenter', dragEnter);
     tile.addEventListener('dragleave', dragLeave);
     tile.addEventListener('dragover', dragOver);
